@@ -42,4 +42,5 @@ export interface OpdsResultView {
     type: OpdsResultType;
     navigation: OpdsLinkView[];
     publications: OpdsPublicationView[];
+    needAuthentication?: boolean;
 }

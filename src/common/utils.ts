@@ -13,8 +13,7 @@ export async function httpGet(url: string): Promise<any> {
             if (error) {
                 reject(error);
             }
-
-            resolve(body);
+            resolve({statusCode: response.statusCode, body});
         });
     });
 }

@@ -75,7 +75,11 @@ export class OpdsApi {
 
     public async browse(data: any): Promise<any> {
         const { url } = data;
-        const opdsFeedData = await httpGet(url) as string;
+        const response = await httpGet(url);
+        if (response.statusCode === 401) {
+            return {needAuthentication: true};
+        }
+        const opdsFeedData = response.body;
         let opds2Publication: OPDSPublication = null;
         let opds2Feed: OPDSFeed = null;
 

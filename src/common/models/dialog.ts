@@ -10,4 +10,5 @@ export enum DialogType {
     PublicationInfo = "publication-info",
     OpdsFeedAddForm = "opds-feed-add-form",
     DeletePublicationConfirm = "delete-publication-confirm",
+    OpdsAuthenticationForm = "opds-authentication-form",
 }

@@ -69,7 +69,7 @@ body {
 
 /* ADD OPDS FEED FORM DIALOG */
 
-#opds_form_dialog {
+#opds_form_dialog, #opds_authentication_form{
   padding: 1.5rem 3rem;
 
   & > div {
@@ -88,6 +88,8 @@ body {
 
         & > label {
           margin-right: 0.5rem;
+          width: 7rem;
+          display: inline-block;
         }
 
         & > input {

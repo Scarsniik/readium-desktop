@@ -27,6 +27,8 @@ import PublicationInfo from "readium-desktop/renderer/components/publication/pub
 
 import DeletePublicationConfirm from "./DeletePublicationConfirm";
 
+import OpdsAuthenticationForm from "./OpdsAuthenticationForm";
+
 import * as styles from "readium-desktop/renderer/assets/styles/app.css";
 
 interface DialogManagerProps  {
@@ -55,6 +57,8 @@ export class DialogManager extends React.Component<DialogManagerProps, undefined
                 return this.buildOpdsFeedAddFormDialog();
             case DialogType.DeletePublicationConfirm:
                 return this.buildDeletePublicationConfirmDialog();
+            case DialogType.OpdsAuthenticationForm:
+                return this.buildOpdsAuthenticationFormDialog();
             default:
                 return (<></>);
         }
@@ -111,6 +115,20 @@ export class DialogManager extends React.Component<DialogManagerProps, undefined
             >
                 <DeletePublicationConfirm
                     publication={ this.props.dialog.data.publication }
+                />
+            </Dialog>
+        );
+    }
+
+    private buildOpdsAuthenticationFormDialog() {
+        return (
+            <Dialog
+                open={ true }
+                close={ this.props.closeDialog }
+                id={styles.opds_authentication_form}
+            >
+                <OpdsAuthenticationForm
+                    url={ this.props.dialog.data.opds.url }
                 />
             </Dialog>
         );
