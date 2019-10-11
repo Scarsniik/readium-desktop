@@ -28,6 +28,8 @@ declare module "yauzl";
 declare module "pouchdb-adapter-leveldb";
 declare module "readium-desktop/pouchdb/jsondown-adapter";
 
+declare module "react-touch-events";
+
 declare module "*.css" {
     interface IClassNames {
         [className: string]: string

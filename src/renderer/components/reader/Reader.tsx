@@ -9,6 +9,7 @@ import * as path from "path";
 import * as queryString from "query-string";
 import * as React from "react";
 import { connect } from "react-redux";
+import * as ReactTouchEvents from "react-touch-events";
 import { ReaderConfig as ReadiumCSS } from "readium-desktop/common/models/reader";
 import { dialogActions, readerActions } from "readium-desktop/common/redux/actions";
 import { setLocale } from "readium-desktop/common/redux/actions/i18n";
@@ -270,6 +271,7 @@ export class Reader extends React.Component<IProps & ReturnType<typeof mapDispat
         this.handleLinkClick = this.handleLinkClick.bind(this);
         this.findBookmarks = this.findBookmarks.bind(this);
         this.displayPublicationInfo = this.displayPublicationInfo.bind(this);
+        this.handleSwipe = this.handleSwipe.bind(this);
     }
 
     public async componentDidMount() {
@@ -469,19 +471,21 @@ export class Reader extends React.Component<IProps & ReturnType<typeof mapDispat
                             readerMenuProps={readerMenuProps}
                             displayPublicationInfo={this.displayPublicationInfo}
                         />
-                        <div className={styles.content_root}>
-                            <div className={styles.reader}>
-                                <main
-                                    id="main"
-                                    role="main"
-                                    className={styles.publication_viewport_container}>
-                                    <a ref={(ref) => this.fastLinkRef = ref}
-                                        id="main-content"
-                                        aria-hidden tabIndex={-1}></a>
-                                    <div id="publication_viewport" className={styles.publication_viewport}> </div>
-                                </main>
+                        <ReactTouchEvents onSwipe={ this.handleSwipe.bind(this) }>
+                            <div className={styles.content_root}>
+                                <div className={styles.reader}>
+                                    <main
+                                        id="main"
+                                        role="main"
+                                        className={styles.publication_viewport_container}>
+                                        <a ref={(ref) => this.fastLinkRef = ref}
+                                            id="main-content"
+                                            aria-hidden tabIndex={-1}></a>
+                                        <div id="publication_viewport" className={styles.publication_viewport}> </div>
+                                    </main>
+                                </div>
                             </div>
-                        </div>
+                        </ReactTouchEvents>
                         <ReaderFooter
                             navLeftOrRight={navLeftOrRight}
                             fullscreen={this.state.fullscreen}
@@ -579,6 +583,17 @@ export class Reader extends React.Component<IProps & ReturnType<typeof mapDispat
         return publication;
     }
 
+    private handleSwipe(direction: string) {
+        switch (direction) {
+            case "left":
+                navLeftOrRight(true);
+                break;
+            case "right":
+                navLeftOrRight(false);
+                break;
+        }
+    }
+
     private handleMenuButtonClick() {
         this.setState({
             menuOpen: !this.state.menuOpen,
@@ -588,7 +603,7 @@ export class Reader extends React.Component<IProps & ReturnType<typeof mapDispat
     }
 
     private saveReadingLocation(loc: LocatorExtended) {
-//        this.props.setLastReadingLocation(queryParams.pubId, loc.locator);
+        // this.props.setLastReadingLocation(queryParams.pubId, loc.locator);
         apiAction("reader/setLastReadingLocation", queryParams.pubId, loc.locator)
             .catch((error) => console.error("Error to fetch api reader/setLastReadingLocation", error));
 
@@ -668,36 +683,13 @@ export class Reader extends React.Component<IProps & ReturnType<typeof mapDispat
 
         const newUrl = publicationJsonUrl + "/../" + url;
         handleLinkUrl(newUrl);
-
-        // Example to pass a specific cssSelector:
-        // (for example to restore a bookmark)
-        // const locator: Locator = {
-        //     href: url,
-        //     locations: {
-        //         cfi: undefined,
-        //         cssSelector: CSSSELECTOR,
-        //         position: undefined,
-        //         progression: undefined,
-        //     }
-        // };
-        // handleLinkLocator(locator);
-
-        // Example to save a bookmark:
-        // const loc: LocatorExtended = getCurrentReadingLocation();
-        // Note: there is additional useful info about pagination
-        // which can be used to report progress info to the user
-        // if (loc.paginationInfo !== null) =>
-        // loc.paginationInfo.totalColumns (N = 1+)
-        // loc.paginationInfo.currentColumn [0, (N-1)]
-        // loc.paginationInfo.isTwoPageSpread (true|false)
-        // loc.paginationInfo.spreadIndex [0, (N/2)]
     }
 
     private async handleToggleBookmark() {
         await this.checkBookmarks();
         if (this.state.visibleBookmarkList.length > 0) {
             for (const bookmark of this.state.visibleBookmarkList) {
-//                this.props.deleteBookmark(bookmark.identifier);
+                // this.props.deleteBookmark(bookmark.identifier);
                 try {
                     await apiAction("reader/deleteBookmark", bookmark.identifier);
                 } catch (e) {
@@ -706,7 +698,7 @@ export class Reader extends React.Component<IProps & ReturnType<typeof mapDispat
             }
         } else if (this.state.currentLocation) {
             const locator = this.state.currentLocation.locator;
-//            this.props.addBookmark(this.pubId, locator);
+            // this.props.addBookmark(this.pubId, locator);
             try {
                 await apiAction("reader/addBookmark", this.pubId, locator);
             } catch (e) {
@@ -799,12 +791,6 @@ export class Reader extends React.Component<IProps & ReturnType<typeof mapDispat
             .catch((error) => console.error("Error to fetch api reader/findBookmarks", error));
     }
 }
-
-/*
-const buildBookmarkRequestData = () => {
-    return [ queryString.parse(location.search).pubId as string ];
-};
-*/
 
 const mapStateToProps = (state: RootState, __: any) => {
     return {
